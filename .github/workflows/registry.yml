@@ -1,0 +1,31 @@
+name: registry
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify archival registry (no skill execution)
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          registry = json.loads(Path("registry/sarissa.json").read_text())
+          assert registry["skill"] == "sarissa"
+          assert registry["execution_authorization"] == "none"
+          assert registry["manual_handoff"]["execution_enabled"] is False
+          assert Path(registry["manual_handoff"]["contract_path"]).is_file()
+          records = registry["records"]
+          assert len({r["id"] for r in records}) == len(records)
+          record = next(r for r in records if r["id"] == "SARISSA-1.0")
+          assert record["path"] == "skill v1"
+          data = Path(record["path"]).read_bytes()
+          header = ("blob " + str(len(data)) + chr(0)).encode()
+          assert hashlib.sha1(header + data).hexdigest() == record["source_blob"]
+          print("Registry metadata and archived blob identity checked; no skill executed.")
+          PY

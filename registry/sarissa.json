@@ -29,5 +29,10 @@
       "evidence": "OBSERVED; runtime unverified"
     }
   ],
-  "registry_scope": "archival metadata; no active operations, credentials, or execution hooks"
+  "registry_scope": "archival metadata; no active operations, credentials, or execution hooks",
+  "manual_handoff": {
+    "contract_path": "docs/security-skill-handoff.md",
+    "version": 1,
+    "execution_enabled": false
+  }
 }
