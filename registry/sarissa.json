@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "skill": "sarissa",
+  "repository": "jussray/sarissa",
+  "registered_version": "1.0",
+  "execution_authorization": "none",
+  "records": [
+    {
+      "id": "JSC-023",
+      "version": "1.0",
+      "kind": "Skill definition",
+      "source": "User-supplied Ecosystem Library Revision 4",
+      "original_created_at": "2026-11-23",
+      "creation_date_evidence": "USER-REPORTED",
+      "observed_on": "2026-11-24",
+      "evidence": "OBSERVED supplied record; exact byte equivalence to repository snapshot not checked",
+      "status": "historical reference"
+    },
+    {
+      "id": "SARISSA-1.0",
+      "version": "1.0",
+      "kind": "Skill definition",
+      "path": "skill v1",
+      "source_commit": "1f2620ac5431dff121d43fc1653e607771b2c4a2",
+      "source_blob": "b4d322071a8461d3da71f1996fa2a50588ec5a97",
+      "original_created_at": null,
+      "observed_on": "2026-11-24",
+      "status": "existing repository definition",
+      "evidence": "OBSERVED; runtime unverified"
+    }
+  ],
+  "registry_scope": "archival metadata; no active operations, credentials, or execution hooks"
+}
