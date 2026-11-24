@@ -6,7 +6,7 @@ This contract connects the three registries at the documentation layer. It is no
 |---|---|---|---|
 | Aegis | 1.1 | jussray/aegis | Defensive review and remediation within scope |
 | Sarissa | 1.0 | jussray/sarissa | Offline assessment planning and reporting |
-| Medusa | 1.1.0 | jussray/juss-protect-me-2 | Offline reasoning and scrutiny of supplied evidence |
+| Medusa | 1.1 | jussray/medusa | Offline reasoning and scrutiny of supplied evidence |
 
 ## Manual exchange
 
