@@ -1,0 +1,31 @@
+name: website
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  static-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check local-only site package
+        run: |
+          node --check site/assets/app.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('site')
+          html = (p/'index.html').read_text()
+          js = (p/'assets/app.js').read_text()
+          for name in ('portrait.webp','ambient.webp','sanctuary.png','wordmark.webp','app.js'):
+              assert (p/'assets'/name).stat().st_size > 0
+              assert 'assets/'+name in html
+          for route in ('home','overview','capabilities','cases','resources','access','request','detect','strategize','respond','report','search'):
+              assert re.search(r'data-open=[\"\x27]'+route+r'[\"\x27]',html), route
+          assert '<script>' not in html
+          assert "connect-src 'none'" in (p/'_headers').read_text()
+          assert 'externalAction:false' in js and "status:'UNSUBMITTED'" in js
+          assert not re.search(r'\b(?:fetch|XMLHttpRequest|WebSocket|sendBeacon)\s*\(',js)
+          print('Static site package and local-only boundaries verified.')
+          PY
