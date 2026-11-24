@@ -1,0 +1,19 @@
+name: Sarissa web proof
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install browser test dependencies
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install playwright==1.57.0
+          .venv/bin/python -m playwright install --with-deps chromium
+      - name: Verify approved artwork, layout and local workflows
+        run: .venv/bin/python tests/test_site.py
