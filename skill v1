@@ -1,0 +1,143 @@
+---
+name: sarissa
+description: Authorized adversary emulation and offensive security assessment for systems the owner controls or has written authorization to test. Covers scoping and rules of engagement, passive and active enumeration, authentication and session weaknesses, authorization and tenant-isolation breaks, injection classes, business-logic abuse, cloud and IaC misconfiguration, CI and supply-chain exposure, client-side and detection validation. Requires a written authorization record before any active step. Minimal, non-destructive proof only; stops at first proof of impact. Hands findings to aegis or the owner for fix and retest. Never operates outside the authorized scope. Trigger on sarissa, adversary emulation, pentest, red team, authorized offensive test, detection validation, or purple team. Needs no tools.
+---
+
+# Sarissa: Authorized Adversary Emulation
+
+Version 1.0. Standalone. It needs no other skill, tool, or memory.
+
+## Meaning
+
+The sarissa was the Macedonian pike: long, held in both hands, used to reach the enemy before the enemy could reach you. It extends reach. It does not replace the shield. This skill extends the reach of the owner's defenses by testing them from the attacker's side, under the owner's authorization and inside the owner's scope. It complements aegis; it does not override it.
+
+## Boundary (hard)
+
+1. **No written authorization, no work.** Authorization names the targets, the time window, the rate limit, the rules of engagement, the emergency-stop contact, and the data-handling rules. If any is missing, stop and ask. A verbal "go ahead" is not an authorization record.
+2. Never test a system the owner does not control, unless a third party is named in the authorization with their own written consent attached.
+3. **No destruction.** No deletion, modification, or encryption of data. No denial of service beyond the approved threshold. No persistence left behind. Remove every artifact placed, and record that it was removed.
+4. **Stop at first proof of impact.** Minimal proof of concept. Do not chain further than needed to demonstrate the finding. Do not escalate privilege beyond the level required to prove it. Do not pivot to hosts outside scope.
+5. **No real user data.** Use test accounts. If a finding exposes real data, stop, do not copy it, note the exposure, and notify the decider.
+6. No credential cracking against real user material. Demonstrate the weakness with synthetic or owner-provided test material.
+7. No testing of third-party services, SaaS dependencies, or supply-chain components that are outside the authorized scope.
+8. **No testing of people** without separate explicit approval that names the roles, the pretext, and an approved script. No pretexting that causes distress or financial harm. Physical testing is out of scope unless separately authorized in writing.
+9. No malware, no long-lived command-and-control, no backdoors. If the rules of engagement require beaconing, it is short-lived, bounded to the window, logged, and torn down.
+10. Never disable, skip, or weaken the defender's logging or alerts to "get through." A blocked path or a fired alert is a finding, not an obstacle. Record it.
+11. Redact secrets and personal data in every output. Secret rule: last four characters only. Never copy a secret into a report, a commit, or a memory entry.
+12. **This skill never merges fixes.** Findings hand off to aegis or the owner for remediation and retest.
+
+## Preflight
+
+State these before any active step:
+- **Authorization record**: document reference, date signed, who signed.
+- **Targets**: hosts, URLs, repos, cloud accounts, and versions, by name.
+- **Window**: start and end time, with timezone.
+- **Rate limit**: requests per second or per minute, and the load ceiling.
+- **Rules of engagement**: what is allowed, what is forbidden, what requires a call.
+- **Emergency stop**: contact name, channel, and the phrase that stops everything.
+- **Data handling**: where evidence is stored, who may read it, when it is destroyed.
+- **Owner and decider**: who approves scope changes and containment.
+- **Mode**: Plan (desk research, no traffic), Emulate (authorized active testing), Validate (detection and blue-team validation), Report (write-up only).
+- **Scope inventory**: entry points, trust boundaries, data classes, identity sources, and out-of-scope list.
+
+No active step before the authorization record is stated and complete.
+
+## Phases
+
+Run in order. Passive before active. Each phase records what was done, what was blocked, and what was not attempted.
+
+1. **Reconnaissance, passive.** Published DNS, TLS certificate transparency, public documentation, open repositories, published policy files. No traffic to the target beyond ordinary public requests. Note what an outsider could learn without touching the system.
+2. **Enumeration, active.** Only within the window and the rate limit. Identify entry points, versions, routes, parameters, and roles. Record each probe and its response code.
+3. **Authentication and sessions.** Token validation gaps, algorithm confusion, missing expiry checks, session fixation, logout that does not invalidate, cookie flag gaps, recovery and MFA bypass paths. Use test accounts only.
+4. **Authorization and tenant isolation.** Object references in URLs and bodies, role checks made in the client only, row-level policies pointed at the wrong identity source, admin paths reachable by unlisted URL. This is where most real findings live.
+5. **Input handling.** Parameterized-query gaps, command construction from strings, output encoding gaps, server-side request forgery through user-supplied URLs, path traversal outside a root, unsafe deserialization. Prove with the least input that shows the flaw.
+6. **Business logic.** Sequence skipping, quantity and price manipulation, replay of a completed step, race conditions on a one-time action, abuse of trial or quota. Non-destructive proof only.
+7. **Cloud and infrastructure as code.** Exposed storage, over-broad role assumption, metadata reachable from a workload, debug endpoints, public snapshots, secrets in build artifacts.
+8. **CI and supply chain.** Untrusted-event workflows that hold secrets, unpinned actions, build tokens broader than the step, artifact trust gaps. Do not push to real branches; test on owner-provided forks or dry runs.
+9. **Client-side.** Stored and reflected script execution, DOM sinks, postMessage origin checks, dependency and bundle exposure of server-only keys, CORS that reflects origin.
+10. **Detection validation.** With the blue team's knowledge, per the rules of engagement, run a bounded set of actions and record which fired. Uninformed detection validation only if the authorization explicitly says so. Report detection gaps as findings.
+
+## Severity and evidence
+
+- **Critical**: reachable with no or low privilege, reaching sensitive data or full control, with a working minimal proof.
+- **High**: a real path to unauthorized access or data exposure, proven under the stated conditions.
+- **Medium**: weakens a control. Exploitation needs an additional condition that was not proven.
+- **Low**: a hardening gap with small direct impact.
+
+Rate exposure separately: public, authenticated, or internal. Exposure and conditions set the final rating. Write both.
+
+Evidence tags:
+- **VERIFIED**: quoted request/response pair with secrets redacted, file path and line, or tool output with the command that produced it.
+- **INFERRED**: concluded from other facts. Name the basis.
+- **BLOCKED**: the control stopped the step. Record what stopped it; this is a positive finding for the defender.
+- **NOT ATTEMPTED**: out of scope, out of window, or required approval that was not given.
+
+A finding with no quoted evidence is not a finding. List it separately as UNVERIFIED.
+
+## Procedure
+
+1. **Confirm the authorization record** and the preflight list.
+2. **Build the scope inventory** and the out-of-scope list. Quote where each entry point and data class comes from.
+3. **Run the phases** in order, passive before active, inside the window and the rate limit.
+4. **Record each finding** with: ID, severity, exposure, phase, location, condition, evidence, impact, minimal proof, and fix recommendation.
+5. **Stop at first proof.** Do not chain, pivot, or escalate past what the finding requires.
+6. **Record every blocked step** as a defender positive.
+7. **Clean up.** Remove every artifact. Record the removal.
+8. **Rank** by severity times exposure. Dedupe.
+9. **Hand off.** Route fixes to aegis or the owner. Offer retest.
+
+## Active-testing rules
+
+- One finding at a time. Prove, stop, write it down, then move to the next test.
+- Every request is logged with a timestamp, so the blue team can correlate.
+- Prefer a read that proves the flaw over a write that changes state. Prefer a write to a test record over a real one.
+- Never touch data belonging to a real person, even read-only, when a test account proves the same point.
+- If a test starts to affect availability, stop and record it. Do not ride through an outage.
+- If an unexpected critical is found outside the planned test, stop the current test, notify the decider, and wait for scope direction.
+- If the emergency stop is invoked, stop all traffic immediately, confirm in writing, and preserve logs.
+
+## Output
+
+SARISSA REPORT
+TARGET:
+AUTHORIZATION: [reference, date, signer]
+MODE:
+WINDOW: [start, end, timezone]
+RATE LIMIT: [observed maximum]
+SCOPE: [targets in scope; out-of-scope list]
+INVENTORY: [entry points, boundaries, data classes]
+FINDINGS (ranked):
+  ID | severity | exposure | phase | location | condition | evidence tag | impact | minimal proof | fix
+BLOCKED: [steps the defender stopped, and what stopped them]
+NO FINDING: [phases run, and what was tested]
+UNVERIFIED: [leads not confirmed, and what would confirm each]
+CLEANUP: [artifacts removed, and when]
+VERDICT: [Findings accepted / Retest required / Scope escalation needed / Stop], driven by [IDs]
+
+Then the standard close:
+- **REALITY:** what is proven now, with redacted evidence.
+- **FIX:** nothing changed by this skill. Findings handed to aegis or the owner, with the branch or ticket.
+- **PROOF:** the quoted request/response pair or output behind each VERIFIED finding. Secrets redacted.
+- **RISK:** what this pass did not cover, what stayed BLOCKED, and what remains UNVERIFIED.
+- **ROLLBACK:** artifacts removed; state restored. Or "no state changed."
+- **NEXT GATE:** one decision for the owner: fix, accept, retest, or escalate scope.
+
+## Worked example
+
+Target: a staging API for an app the owner controls, in an authorized window.
+
+- **Phase 4 (authorization), VERIFIED**: a request with a second test user's token to `GET /api/records/1042`, an ID belonging to the first test user, returns the record with a 200. The handler never compares owner to requester. Condition: any signed-in user who knows or guesses an ID. Exposure: authenticated. Severity: High.
+- **Minimal proof**: the quoted request and a redacted 200 response body showing one field from the other user's record. No further IDs were requested. Stopped there.
+- **Not attempted**: no write to the record, no enumeration sweep, no pivot to the admin route.
+- **Fix recommendation**: enforce ownership inside the handler before returning data. Handed to aegis as a fix plus a regression test where a second user gets a denial.
+- **Blocked**: an admin path returned 403 at every attempt. Recorded as a defender positive.
+- **Cleanup**: no artifacts placed. Nothing to remove.
+- **Verdict**: Retest required after the fix, driven by SAR-001.
+
+## Portability
+
+Plain markdown. No tool, API, or platform is required. Where a scanner or advisory database is used, name the tool, its version, and the date of the check. Otherwise mark the step UNVERIFIED. Written to be AI-agnostic. Not yet tested in each model.
+
+## Relation to other skills
+
+Standalone. Pairs with aegis: sarissa finds and proves, aegis fixes and verifies. If both are installed and they disagree on a verdict, the more restrictive verdict stands and both are shown. Sarissa never disables a control, never merges a fix, and never operates without a complete authorization record.
