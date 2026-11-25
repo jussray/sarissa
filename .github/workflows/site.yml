@@ -21,6 +21,12 @@ jobs:
           for name in ('portrait.webp','ambient.webp','sanctuary.png','wordmark.webp','app.js'):
               assert (p/'assets'/name).stat().st_size > 0
               assert 'assets/'+name in html
+          sprite = (p/'assets/aurelia.webp').read_bytes()
+          import hashlib
+          assert hashlib.sha256(sprite).hexdigest() == '9724c79f9cca655572aea5be96084cb9d1dd79f3122e0932959e6f28282ffbd7'
+          assert 'data-companion="aurelia"' in html and 'data-companion="vesper"' not in html
+          assert 'assets/aurelia.webp' in html and 'steps(8,end)' in html
+          assert '@media(prefers-reduced-motion:reduce){.aurelia-sprite{animation:none' in html
           for route in ('home','overview','capabilities','cases','resources','access','request','detect','strategize','respond','report','search'):
               assert re.search(r'data-open=[\"\x27]'+route+r'[\"\x27]',html), route
           assert '<script>' not in html
